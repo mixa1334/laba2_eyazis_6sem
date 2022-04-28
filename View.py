@@ -23,7 +23,7 @@ class View(tk.Tk):
         save_button.grid(row=0, column=1)
         create_empty_voc = tk.Button(menu_frame, text="создать пустой", command=self.__command_create_empty)
         create_empty_voc.grid(row=0, column=2)
-        create_from_doc = tk.Button(menu_frame, text="создать из doc", command=self.__command_create_from_doc)
+        create_from_doc = tk.Button(menu_frame, text="создать из docx", command=self.__command_create_from_doc)
         create_from_doc.grid(row=0, column=3)
         add_new_item = tk.Button(menu_frame, text="добавить предложение", command=self.__command_sentence_word_to_voc)
         add_new_item.grid(row=0, column=4)
@@ -43,22 +43,35 @@ class View(tk.Tk):
         self.__set_content_table(Vocabulary.Vocabulary())
 
     def __command_user_info(self):
-        return None
-        # user_guid = """
-        # открыть - выбрав подходящий файл можно загрузить словарь\n
-        # сохранить - набрав имя файла его можно сохранить\n
-        # создать пустой - создание пустого словаря\n
-        # создать из doc - помогает созать словарь по имеющемуся doc файлу\n
-        # добавить словоформу - введя все необходимые параметры можно создать новую словоформу в словаре\n
-        # редактировать словоформу - необходимо выбрать нужную форму и отредактировать интересующие поля\n
-        # фильтрация - возможность включить и отключить фильтры по необходимым критериям\n
-        # поиск - поиск по заданным критериям\n
-        # документирование - сохранения словаря в документированном виде в файле типа doc\n
-        # """
-        # top = tk.Toplevel()
-        # top.resizable(False, False)
-        # top.title("Информация")
-        # tk.Label(top, text=user_guid).grid(row=0, column=0, padx=10, pady=10)
+        user_guid = """
+        открыть - выбрав подходящий файл можно загрузить словарь\n
+        сохранить - набрав имя файла его можно сохранить\n
+        создать пустой - создание пустого словаря\n
+        создать из docx - помогает созать словарь по имеющемуся docx файлу\n
+        добавить предложение - после ввода предложения ему можно сохранить и оно появится в словаре\n
+        редактировать предложение - изначально необходимо выбрать номер предложения из выпадающего спика
+        , после нажать на кнопку "Выбрать и оно будет доступно для редактирования и последующего сохранения"\n
+        фильтрация - возможность включить и отключить фильтры по необходимым критериям (*)\n
+        поиск - поиск по заданным критериям (*)\n
+        документирование - сохранения словаря в документированном виде в файле типа docx, также можно применить фильтр (*)\n\n
+        (*) фильтры:\n
+        NN - существительное в единственном числе (pyramid)\n
+        NNS - существительное во множественном числе (lectures)\n
+        NNP - имя собственное (Khufu)\n
+        VBD - глагол прошедшего времени (claimed)\n
+        VBZ - глагол настоящего времени 3-го лица единственного числа (is)\n
+        VBP - глагол настоящего времени не 3-го лица единственного числа (have)\n
+        VBN - причастие прошедшего времени (found)\n
+        PRP - местоимение (they)\n
+        PRP$ - притяжательное местоимение (their)\n
+        JJ - прилагательное (public)\n
+        IN - предлог (in)\n
+        DT - определитель (the)\n
+        """
+        top = tk.Toplevel()
+        top.resizable(False, False)
+        top.title("Информация")
+        tk.Label(top, text=user_guid).grid(row=0, column=0, padx=10, pady=10)
 
     def __command_save_as_doc(self):
         top = tk.Toplevel()
@@ -236,14 +249,17 @@ class View(tk.Tk):
         top.e_input.delete(0, tk.END)
         top.e_input.insert(tk.END, sent_str)
         top.e_input.configure(state=tk.NORMAL)
+        top.number_of_sen = sent_num
 
     def __edit_sentence_process(self, top):
-        info = [top.part_of_lang.get(), top.gen.get(), top.number.get(), top.padej.get()]
-        count = top.count.get()
-        word = top.choice.get()
-        top.destroy()
-        voc = self.__controller.edit_word_in_voc(word, count, info)
-        self.__set_content_table(voc)
+        if top.e_input['state'] == 'disabled':
+            messagebox.showerror("Редактирование", "Не было выбрано предложение для редактирования")
+        else:
+            sent_number = top.number_of_sen
+            sent_str = top.e_input.get()
+            top.destroy()
+            voc = self.__controller.edit_word_in_voc(sent_number, sent_str)
+            self.__set_content_table(voc)
 
     def __command_sentence_word_to_voc(self):
         top = tk.Toplevel()

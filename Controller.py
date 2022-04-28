@@ -37,7 +37,9 @@ class Controller:
         return self.__voc
 
     def edit_word_in_voc(self, id, str_sent):
-        return None
+        sentense = engine.process_sentence(str_sent)
+        self.__voc.replace_sentence_by_id(id, sentense)
+        return self.__voc
 
     def set_filter_settings(self, setting):
         self.__voc.set_filter_settings(list(setting))
