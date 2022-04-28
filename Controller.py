@@ -28,32 +28,16 @@ class Controller:
         self.__voc = engine.process_text(text)
         return self.__voc
 
-    # def add_new_word_to_voc(self, word, count, morphological_info):
-    #     lemma = engine.process_word_to_lemma(word)[0]
-    #     self.__voc.add_word_according_to_lemma(word, lemma)
-    #     self.__voc.set_count_of_word(word, count, lemma)
-    #     self.__voc.add_morphological_information(word, morphological_info)
-    #     return self.__voc
+    def add_new_sentence_to_voc(self, sentence):
+        sentence = engine.process_sentence(sentence)
+        self.__voc.add_sentence(sentence)
+        return self.__voc
 
     def get_voc(self):
         return self.__voc
 
-    # def edit_word_in_voc(self, word, count, morphological_info):
-    #     lemma = engine.process_word_to_lemma(word)[0]
-    #     old_info = self.__voc.get_morphological_info_according_to_word(word)
-    #     new_info = []
-    #     if count != "":
-    #         self.__voc.set_count_of_word(word, count, lemma)
-    #     for i in range(4):
-    #         if morphological_info[i] != "":
-    #             new_info.append(morphological_info[i])
-    #         else:
-    #             if len(old_info) > i:
-    #                 new_info.append(old_info[i])
-    #             else:
-    #                 new_info.append("")
-    #     self.__voc.add_morphological_information(word, new_info)
-    #     return self.__voc
+    def edit_word_in_voc(self, id, str_sent):
+        return None
 
     def set_filter_settings(self, setting):
         self.__voc.set_filter_settings(list(setting))

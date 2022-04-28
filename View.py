@@ -25,9 +25,9 @@ class View(tk.Tk):
         create_empty_voc.grid(row=0, column=2)
         create_from_doc = tk.Button(menu_frame, text="создать из doc", command=self.__command_create_from_doc)
         create_from_doc.grid(row=0, column=3)
-        add_new_item = tk.Button(menu_frame, text="добавить предложение", command=self.__command_new_word_to_voc)
+        add_new_item = tk.Button(menu_frame, text="добавить предложение", command=self.__command_sentence_word_to_voc)
         add_new_item.grid(row=0, column=4)
-        edit_word = tk.Button(menu_frame, text="редактировать предложение", command=self.__command_edit_word)
+        edit_word = tk.Button(menu_frame, text="редактировать предложение", command=self.__command_edit_sentence)
         edit_word.grid(row=0, column=5)
         filter_table = tk.Button(menu_frame, text="фильтрация", command=self.__command_filter_table)
         filter_table.grid(row=0, column=6)
@@ -203,61 +203,49 @@ class View(tk.Tk):
         voc = self.__controller.get_voc()
         self.__set_content_table(voc)
 
-    def __command_edit_word(self):
-        return None
-        # words = sorted(self.__controller.get_voc().get_all_words())
-        # if len(words) < 1:
-        #     messagebox.showerror("Редактирование", "Нет подходящих слов для редактирования")
-        # else:
-        #     top = tk.Toplevel()
-        #     top.resizable(False, False)
-        #     top.title("Редактирование")
-        #     menu_choice = tk.StringVar()
-        #     menu_choice.set(words[0])
-        #     top.choice = menu_choice
-        #
-        #     drop = tk.OptionMenu(top, menu_choice, *words)
-        #     drop.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
-        #
-        #     l_count = tk.Label(top, text="Кол-во")
-        #     e_count = tk.Entry(top)
-        #     l_count.grid(row=1, column=0, pady=10, padx=10)
-        #     e_count.grid(row=1, column=1, pady=10, padx=10)
-        #     l_part_of_lang = tk.Label(top, text="Часть речи")
-        #     l_gen = tk.Label(top, text="Род")
-        #     l_number = tk.Label(top, text="Число")
-        #     l_padeJ = tk.Label(top, text="Падеж")
-        #     e_part_of_lang = tk.Entry(top)
-        #     e_gen = tk.Entry(top)
-        #     e_number = tk.Entry(top)
-        #     e_padeJ = tk.Entry(top)
-        #     l_part_of_lang.grid(row=2, column=0, pady=10, padx=10)
-        #     l_gen.grid(row=3, column=0, pady=10, padx=10)
-        #     l_number.grid(row=4, column=0, pady=10, padx=10)
-        #     l_padeJ.grid(row=5, column=0, pady=10, padx=10)
-        #     e_part_of_lang.grid(row=2, column=1, pady=10, padx=10)
-        #     e_gen.grid(row=3, column=1, pady=10, padx=10)
-        #     e_number.grid(row=4, column=1, pady=10, padx=10)
-        #     e_padeJ.grid(row=5, column=1, pady=10, padx=10)
-        #     top.count = e_count
-        #     top.part_of_lang = e_part_of_lang
-        #     top.gen = e_gen
-        #     top.number = e_number
-        #     top.padej = e_padeJ
-        #
-        #     submit = tk.Button(top, text="Изменить", command=lambda: self.__edit_words_process(top))
-        #     submit.grid(row=6, column=0, columnspan=2, pady=10, padx=10)
+    def __command_edit_sentence(self):
+        sentences = self.__controller.get_voc().get_all_sentences()
+        if len(sentences) < 1:
+            messagebox.showerror("Редактирование", "Нет подходящих предложений для редактирования")
+        else:
+            top = tk.Toplevel()
+            top.resizable(False, False)
+            top.geometry("500x300")
+            top.title("Редактирование")
+            top.sentences = sentences
+            menu_choice = tk.StringVar()
+            menu_choice.set(str(0))
+            top.choice = menu_choice
 
-    def __edit_words_process(self, top):
-        return None
-        # info = [top.part_of_lang.get(), top.gen.get(), top.number.get(), top.padej.get()]
-        # count = top.count.get()
-        # word = top.choice.get()
-        # top.destroy()
-        # voc = self.__controller.edit_word_in_voc(word, count, info)
-        # self.__set_content_table(voc)
+            drop = tk.OptionMenu(top, menu_choice, *list(dict(sentences).keys()))
+            drop.grid(row=0, column=0, padx=10, pady=10)
+            set_sentence_b = tk.Button(top, text="Выбрать", command=lambda: self.__set_sentence_for_editing(top))
+            set_sentence_b.grid(row=0, column=1, padx=10, pady=10)
 
-    def __command_new_word_to_voc(self):
+            e_input = tk.Entry(top, width=75)
+            e_input.configure(state=tk.DISABLED)
+            e_input.grid(row=1, column=0, columnspan=2, pady=10, padx=10)
+            top.e_input = e_input
+
+            submit = tk.Button(top, text="Изменить", command=lambda: self.__edit_sentence_process(top))
+            submit.grid(row=6, column=0, columnspan=2, pady=10, padx=10)
+
+    def __set_sentence_for_editing(self, top):
+        sent_num = int(top.choice.get())
+        sent_str = top.sentences[sent_num].get_string()
+        top.e_input.delete(0, tk.END)
+        top.e_input.insert(tk.END, sent_str)
+        top.e_input.configure(state=tk.NORMAL)
+
+    def __edit_sentence_process(self, top):
+        info = [top.part_of_lang.get(), top.gen.get(), top.number.get(), top.padej.get()]
+        count = top.count.get()
+        word = top.choice.get()
+        top.destroy()
+        voc = self.__controller.edit_word_in_voc(word, count, info)
+        self.__set_content_table(voc)
+
+    def __command_sentence_word_to_voc(self):
         top = tk.Toplevel()
         top.resizable(False, False)
         top.title("Добавить новое предложение")
@@ -268,22 +256,13 @@ class View(tk.Tk):
         e_sentence.grid(row=1, column=0, pady=10, padx=10)
         top.sentence = e_sentence
         b_add = tk.Button(top, text="Добавить", command=lambda: self.__add_new_sentence_process(top))
-        b_add.grid(row=4, column=0, columnspan=2)
+        b_add.grid(row=2, column=0, pady=10, padx=10)
 
     def __add_new_sentence_process(self, top):
-        return None
-        # word = top.word.get()
-        # count = top.count.get()
-        # if top.r_but.get() == 1:
-        #     morphological_info = [top.format_frame.part_of_lang.get(),
-        #                           top.format_frame.gen.get(),
-        #                           top.format_frame.number.get(),
-        #                           top.format_frame.padeJ.get()]
-        # else:
-        #     morphological_info = [top.own_format.str_input.get()]
-        # top.destroy()
-        # voc = self.__controller.add_new_word_to_voc(word, count, morphological_info)
-        # self.__set_content_table(voc)
+        sentence = top.sentence.get()
+        top.destroy()
+        voc = self.__controller.add_new_sentence_to_voc(sentence)
+        self.__set_content_table(voc)
 
     def __command_open(self):
         filename = filedialog.askopenfilename(title="Выберите файл для открытия", filetypes=[("pkl files", ".pkl")])

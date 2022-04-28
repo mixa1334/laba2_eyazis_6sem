@@ -14,6 +14,9 @@ class Vocabulary:
     def get_sentence_by_id(self, id):
         return self.__sentences[id]
 
+    def replace_sentence_by_id(self, id, sentence):
+        self.__sentences[id] = sentence
+
     def set_filter_settings(self, settings):
         del self.__filter_settings
         self.__filter_settings = list(settings)
