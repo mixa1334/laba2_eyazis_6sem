@@ -7,7 +7,7 @@ class Table:
 
         second_frame = tk.Frame(parent)
         parent.create_window((0, 0), window=second_frame, anchor="nw")
-        for i in range(50):
+        for sentence in range(50):
             for j in range(3):
                 self.e = tk.Entry(second_frame, width=20, fg='blue',
                                   font=('Arial', 16, 'bold'))

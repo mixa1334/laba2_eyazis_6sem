@@ -22,17 +22,18 @@ class Vocabulary:
         self.__do_filter = enable
 
     def get_all_sentences(self):
-        result_sentences = []
-        for sentence in self.__sentences:
+        result_sentences = {}
+        for i in range(len(self.__sentences)):
+            sent = self.__sentences[i]
             if self.__do_filter:
                 status = True
                 for filter in self.__filter_settings:
-                    if filter not in sentence.get_elements():
+                    if filter not in sent.get_elements():
                         status = False
                 if status:
-                    result_sentences.append(sentence)
+                    result_sentences[i] = sent
             else:
-                result_sentences.append(sentence)
+                result_sentences[i] = sent
         return result_sentences
 
     def __del__(self):

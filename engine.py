@@ -30,7 +30,7 @@ def read_text_from_file(filename):
 def write_text_to_file(filename, voc):
     doc_file = docx.Document()
     doc_file.add_heading("Предложения", 1)
-    for sentence in voc.get_all_sentences():
+    for sentence in dict(voc.get_all_sentences()).values():
         doc_file.add_paragraph("---------------------------------------------------------------------------------")
         sentence_text = "Предложение: " + "\'" + str(sentence.get_string()) + "\"" + "\n дерево -> " + str(
             sentence.get_tree())
@@ -41,7 +41,7 @@ def write_text_to_file(filename, voc):
 def write_vocabulary_to_file(voc, filename):
     with open(filename + ".pkl", "wb") as file:
         result_list = []
-        for sent in voc.get_all_sentences():
+        for sent in dict(voc.get_all_sentences()).values():
             sent_list = [sent.get_string(), sent.get_elements(), sent.get_tugged()]
             result_list.append(sent_list)
         pickle.dump(result_list, file)
