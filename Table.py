@@ -1,18 +1,22 @@
 import tkinter as tk
-from tkinter import ttk
 
 
 class Table:
     def __init__(self, parent, voc):
-
         second_frame = tk.Frame(parent)
         parent.create_window((0, 0), window=second_frame, anchor="nw")
-        for sentence in range(50):
-            for j in range(3):
-                self.e = tk.Entry(second_frame, width=20, fg='blue',
-                                  font=('Arial', 16, 'bold'))
 
-                self.e.grid(row=i, column=j)
-                self.e.insert(tk.END, "hello")
-            b = tk.Button(second_frame, text="show")
-            b.grid(row=i, column=4)
+        for item in dict(voc.get_all_sentences()).items():
+            i = item[0]
+            sent = item[1]
+            number = tk.Label(second_frame, text=i, width=20, fg='black',
+                              font=('Arial', 10, 'bold'), borderwidth=1)
+            number.grid(row=i, column=0, padx=10, pady=10)
+            sentence = tk.Label(second_frame, text=sent.get_string(), width=50, fg='black',
+                                font=('Arial', 10, 'bold'), borderwidth=1)
+            sentence.grid(row=i, column=1, padx=10, pady=10)
+            self.__init_button_to_draw_tree__(second_frame, i, sent)
+
+    def __init_button_to_draw_tree__(self, frame, i, s):
+        b = tk.Button(frame, text="показать дерево", command=lambda: s.get_tree().draw())
+        b.grid(row=i, column=2, padx=10, pady=10)
