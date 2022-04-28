@@ -13,6 +13,11 @@ class App:
         self.__view = view
         self.__controller = controller
 
+    def __del__(self):
+        del self.__controller
+        del self.__view
+        del self.__voc
+
     def start(self):
         self.__view.mainloop()
 

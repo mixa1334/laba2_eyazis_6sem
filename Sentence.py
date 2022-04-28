@@ -3,11 +3,13 @@ class Sentence:
         self.__string = ""
         self.__elements = []
         self.__tree = None
+        self.__tagged = []
 
     def __del__(self):
         del self.__string
         del self.__elements
         del self.__tree
+        del self.__tagged
 
     def get_string(self):
         return self.__string
@@ -17,6 +19,13 @@ class Sentence:
 
     def get_tree(self):
         return self.__tree
+
+    def get_tugged(self):
+        return self.__tagged
+
+    def set_tugged(self, tagged):
+        del self.__tagged
+        self.__tagged = tagged
 
     def set_string(self, string):
         del self.__string

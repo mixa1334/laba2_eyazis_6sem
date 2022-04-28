@@ -10,6 +10,14 @@ import pickle
 import Vocabulary
 import Sentence
 
+chunker = RegexpParser("""
+                       NP: {<DT>?<JJ>*<NN>}    #To extract Noun Phrases
+                       P: {<IN>}               #To extract Prepositions
+                       V: {<V.*>}              #To extract Verbs
+                       PP: {<p> <NP>}          #To extract Prepositional Phrases
+                       VP: {<V> <NP|PP>*}      #To extract Verb Phrases
+                       """)
+
 
 def read_text_from_file(filename):
     doc = docx.Document(filename)
@@ -32,13 +40,26 @@ def write_text_to_file(filename, voc):
 
 def write_vocabulary_to_file(voc, filename):
     with open(filename + ".pkl", "wb") as file:
-        pickle.dump(voc, file)
+        result_list = []
+        for sent in voc.get_all_sentences():
+            sent_list = [sent.get_string(), sent.get_elements(), sent.get_tugged()]
+            result_list.append(sent_list)
+        pickle.dump(result_list, file)
 
 
 def read_vocabulary_from_file(filename):
     with open(filename, "rb") as file:
-        voc = pickle.load(file)
-    return list(voc)
+        voc = Vocabulary.Vocabulary()
+        result_list = list(pickle.load(file))
+        for item in result_list:
+            s = Sentence.Sentence()
+            s.set_string(item[0])
+            s.set_elements(list(item[1]))
+            tagged = item[2]
+            s.set_tugged(tagged)
+            s.set_tree(chunker.parse(tagged))
+            voc.add_sentence(s)
+        return voc
 
 
 def process_text(text):
@@ -54,17 +75,11 @@ def process_text(text):
 
 def process_sentence(sent):
     s = Sentence.Sentence()
-    chunker = RegexpParser("""
-                           NP: {<DT>?<JJ>*<NN>}    #To extract Noun Phrases
-                           P: {<IN>}               #To extract Prepositions
-                           V: {<V.*>}              #To extract Verbs
-                           PP: {<p> <NP>}          #To extract Prepositional Phrases
-                           VP: {<V> <NP|PP>*}      #To extract Verb Phrases
-                           """)
     tagged = pos_tag(list(filter(lambda val: val not in punctuation, word_tokenize(sent))))
     elements = [item[1] for item in tagged]
     tree = chunker.parse(tagged)
     s.set_string(sent)
     s.set_elements(elements)
     s.set_tree(tree)
+    s.set_tugged(tagged)
     return s
