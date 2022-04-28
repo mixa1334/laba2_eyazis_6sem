@@ -190,69 +190,43 @@ class View(tk.Tk):
         # self.__controller.set_filter_enable(False)
 
     def __command_filter_table(self):
-        return None
-        # top = tk.Toplevel()
-        # top.resizable(False, False)
-        # top.title("Фильтр")
-        # l_count = tk.Label(top, text="Кол-во")
-        # e_count = tk.Entry(top)
-        # l_count.grid(row=0, column=0, pady=10, padx=10)
-        # e_count.grid(row=0, column=1, pady=10, padx=10)
-        # l_part_of_lang = tk.Label(top, text="Часть речи")
-        # l_gen = tk.Label(top, text="Род")
-        # l_number = tk.Label(top, text="Число")
-        # l_padeJ = tk.Label(top, text="Падеж")
-        # e_part_of_lang = tk.Entry(top)
-        # e_gen = tk.Entry(top)
-        # e_number = tk.Entry(top)
-        # e_padeJ = tk.Entry(top)
-        # l_part_of_lang.grid(row=1, column=0, pady=10, padx=10)
-        # l_gen.grid(row=2, column=0, pady=10, padx=10)
-        # l_number.grid(row=3, column=0, pady=10, padx=10)
-        # l_padeJ.grid(row=4, column=0, pady=10, padx=10)
-        # e_part_of_lang.grid(row=1, column=1, pady=10, padx=10)
-        # e_gen.grid(row=2, column=1, pady=10, padx=10)
-        # e_number.grid(row=3, column=1, pady=10, padx=10)
-        # e_padeJ.grid(row=4, column=1, pady=10, padx=10)
-        # top.count = e_count
-        # top.part_of_lang = e_part_of_lang
-        # top.gen = e_gen
-        # top.number = e_number
-        # top.padej = e_padeJ
-        #
-        # l_morph_format_info = tk.Label(top, text="Включать слова с неформатированным вводом?")
-        # l_morph_format_info.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
-        # r_buttons = tk.IntVar()
-        # r_buttons.set(1)
-        # top.r_but = r_buttons
-        # tk.Radiobutton(top, text="да", variable=r_buttons, value=True).grid(row=6, column=0, pady=10, padx=10)
-        # tk.Radiobutton(top, text="нет", variable=r_buttons, value=False).grid(row=6, column=1, pady=10, padx=10)
-        #
-        # submit = tk.Button(top, text="Применить", command=lambda: self.__process_filter_button(top))
-        # submit.grid(row=7, column=0, columnspan=2, pady=10, padx=10)
-        # reset = tk.Button(top, text="Сбросить изменения", command=lambda: self.__reset_filter(top))
-        # reset.grid(row=8, column=0, columnspan=2, pady=10, padx=10)
+        top = tk.Toplevel()
+        top.resizable(False, False)
+        top.geometry("200x650")
+        top.title("Фильтр")
+        chb_map = {}
+        headers = ["NN", "NNS", "NNP", "VBD", "VBZ", "VBP", "VBN", "PRP", "PRP$", "JJ", "IN", "DT"]
+
+        for i in range(len(headers)):
+            head = headers[i]
+            var = tk.IntVar()
+            chb = tk.Checkbutton(top, text=head, variable=var)
+            chb.grid(row=i, column=0, pady=10, padx=10)
+            chb_map[head] = var
+
+        top.chb_map = chb_map
+
+        submit = tk.Button(top, text="Применить", command=lambda: self.__process_filter_button(top))
+        submit.grid(row=len(headers), column=0, pady=10, padx=10)
+        reset = tk.Button(top, text="Сбросить изменения", command=lambda: self.__reset_filter(top))
+        reset.grid(row=len(headers) + 1, column=0, pady=10, padx=10)
 
     def __process_filter_button(self, top):
-        return None
-        # settings = [top.count.get(),
-        #             top.part_of_lang.get(),
-        #             top.gen.get(),
-        #             top.number.get(),
-        #             top.padej.get(),
-        #             top.r_but.get()]
-        # top.destroy()
-        # self.__controller.set_filter_settings(settings)
-        # self.__controller.set_filter_enable(True)
-        # voc = self.__controller.get_voc()
-        # self.__set_content_table(voc)
+        settings = []
+        for item in dict(top.chb_map).items():
+            if item[1].get() == 1:
+                settings.append(item[0])
+        top.destroy()
+        self.__controller.set_filter_settings(settings)
+        self.__controller.set_filter_enable(True)
+        voc = self.__controller.get_voc()
+        self.__set_content_table(voc)
 
     def __reset_filter(self, top):
-        return None
-        # top.destroy()
-        # self.__controller.set_filter_enable(False)
-        # voc = self.__controller.get_voc()
-        # self.__set_content_table(voc)
+        top.destroy()
+        self.__controller.set_filter_enable(False)
+        voc = self.__controller.get_voc()
+        self.__set_content_table(voc)
 
     def __command_edit_word(self):
         return None
