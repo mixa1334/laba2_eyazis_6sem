@@ -15,8 +15,8 @@ class Table:
             sentence = tk.Label(second_frame, text=sent.get_string(), width=50, fg='black',
                                 font=('Arial', 10, 'bold'), borderwidth=1)
             sentence.grid(row=i, column=1, padx=10, pady=10)
-            self.__init_button_to_draw_tree__(second_frame, i, sent)
+            self.__init_button_to_draw_tree(second_frame, i, sent)
 
-    def __init_button_to_draw_tree__(self, frame, i, s):
+    def __init_button_to_draw_tree(self, frame, i, s):
         b = tk.Button(frame, text="показать дерево", command=lambda: s.get_tree().draw())
         b.grid(row=i, column=2, padx=10, pady=10)

@@ -1,6 +1,3 @@
-# import nltk
-# nltk.download('punkt')
-# nltk.download('averaged_perceptron_tagger')
 import nltk.tokenize
 from nltk import pos_tag, word_tokenize, RegexpParser
 from string import punctuation
@@ -35,7 +32,7 @@ def write_text_to_file(filename, voc):
         sentence_text = "Предложение: " + "\'" + str(sentence.get_string()) + "\"" + "\n дерево -> " + str(
             sentence.get_tree())
         doc_file.add_paragraph(sentence_text)
-    doc_file.save(filename + ".doc")
+    doc_file.save(filename + ".docx")
 
 
 def write_vocabulary_to_file(voc, filename):

@@ -61,133 +61,108 @@ class View(tk.Tk):
         # tk.Label(top, text=user_guid).grid(row=0, column=0, padx=10, pady=10)
 
     def __command_save_as_doc(self):
-        return None
-        # top = tk.Toplevel()
-        # top.resizable(False, False)
-        # top.title("Задокументировать")
-        # l_count = tk.Label(top, text="Кол-во")
-        # e_count = tk.Entry(top)
-        # l_count.grid(row=0, column=0, pady=10, padx=10)
-        # e_count.grid(row=0, column=1, pady=10, padx=10)
-        # l_part_of_lang = tk.Label(top, text="Часть речи")
-        # l_gen = tk.Label(top, text="Род")
-        # l_number = tk.Label(top, text="Число")
-        # l_padeJ = tk.Label(top, text="Падеж")
-        # e_part_of_lang = tk.Entry(top)
-        # e_gen = tk.Entry(top)
-        # e_number = tk.Entry(top)
-        # e_padeJ = tk.Entry(top)
-        # l_part_of_lang.grid(row=1, column=0, pady=10, padx=10)
-        # l_gen.grid(row=2, column=0, pady=10, padx=10)
-        # l_number.grid(row=3, column=0, pady=10, padx=10)
-        # l_padeJ.grid(row=4, column=0, pady=10, padx=10)
-        # e_part_of_lang.grid(row=1, column=1, pady=10, padx=10)
-        # e_gen.grid(row=2, column=1, pady=10, padx=10)
-        # e_number.grid(row=3, column=1, pady=10, padx=10)
-        # e_padeJ.grid(row=4, column=1, pady=10, padx=10)
-        # top.count = e_count
-        # top.part_of_lang = e_part_of_lang
-        # top.gen = e_gen
-        # top.number = e_number
-        # top.padej = e_padeJ
-        #
-        # l_morph_format_info = tk.Label(top, text="Включать слова с неформатированным вводом?")
-        # l_morph_format_info.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
-        # r_buttons = tk.IntVar()
-        # r_buttons.set(1)
-        # top.r_but = r_buttons
-        # tk.Radiobutton(top, text="да", variable=r_buttons, value=True).grid(row=6, column=0, pady=10, padx=10)
-        # tk.Radiobutton(top, text="нет", variable=r_buttons, value=False).grid(row=6, column=1, pady=10, padx=10)
-        #
-        # l_filename = tk.Label(top, text="Имя файла")
-        # l_filename.grid(row=7, column=0, padx=10, pady=10)
-        # e_filename = tk.Entry(top)
-        # e_filename.grid(row=7, column=1, padx=10, pady=10)
-        # top.filename = e_filename
-        #
-        # submit = tk.Button(top, text="Задокуметировать", command=lambda: self.__process_save_as_doc(top))
-        # submit.grid(row=8, column=0, columnspan=2, pady=10, padx=10)
+        top = tk.Toplevel()
+        top.resizable(False, False)
+        top.geometry("1000x400")
+        top.title("Документировать")
+        chb_map = {}
+        headers = ["NN", "NNS", "NNP", "VBD", "VBZ", "VBP", "VBN", "PRP", "PRP$", "JJ", "IN", "DT"]
+
+        for i in range(len(headers)):
+            head = headers[i]
+            var = tk.IntVar()
+            chb = tk.Checkbutton(top, text=head, variable=var)
+            chb.grid(row=0, column=i, pady=10, padx=10)
+            chb_map[head] = var
+
+        top.chb_map = chb_map
+
+        content_frame = tk.Frame(top)
+        my_canvas = tk.Canvas(content_frame)
+        my_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        my_scroll_bar = ttk.Scrollbar(content_frame, orient=tk.VERTICAL, command=my_canvas.yview)
+        my_scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
+        my_canvas.configure(yscrollcommand=my_scroll_bar.set)
+        my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion=my_canvas.bbox("all")))
+
+        top.table = Table.Table(my_canvas, Vocabulary.Vocabulary())
+        content_frame.place(relx=0, rely=0.1, relwidth=1, relheight=0.9)
+        top.content_frame = content_frame
+
+        l_filename = tk.Label(top, text="Имя файла")
+        l_filename.grid(row=1, column=0, padx=10, pady=10, columnspan=6)
+        e_filename = tk.Entry(top)
+        e_filename.grid(row=1, column=7, padx=10, pady=10, columnspan=6)
+        top.filename = e_filename
+
+        submit = tk.Button(top, text="Сохранить", command=lambda: self.__process_save_as_doc(top))
+        submit.grid(row=2, column=0, pady=10, padx=10, columnspan=12)
 
     def __process_save_as_doc(self, top):
-        return None
-        # settings = [top.count.get(),
-        #             top.part_of_lang.get(),
-        #             top.gen.get(),
-        #             top.number.get(),
-        #             top.padej.get(),
-        #             top.r_but.get()]
-        # fname = top.filename.get()
-        # top.destroy()
-        # self.__controller.set_filter_settings(settings)
-        # self.__controller.set_filter_enable(True)
-        # self.__controller.save_as_doc(fname)
-        # self.__controller.set_filter_enable(False)
+        settings = []
+        for item in dict(top.chb_map).items():
+            if item[1].get() == 1:
+                settings.append(item[0])
+        fname = top.filename.get()
+        top.destroy()
+        self.__controller.set_filter_settings(settings)
+        self.__controller.set_filter_enable(True)
+        self.__controller.save_as_doc(fname)
+        self.__controller.set_filter_enable(False)
 
     def __command_find_by(self):
-        return None
-        # top = tk.Toplevel()
-        # top.resizable(False, False)
-        # top.title("Найти")
-        # l_count = tk.Label(top, text="Кол-во")
-        # e_count = tk.Entry(top)
-        # l_count.grid(row=0, column=0, pady=10, padx=10)
-        # e_count.grid(row=0, column=1, pady=10, padx=10)
-        # l_part_of_lang = tk.Label(top, text="Часть речи")
-        # l_gen = tk.Label(top, text="Род")
-        # l_number = tk.Label(top, text="Число")
-        # l_padeJ = tk.Label(top, text="Падеж")
-        # e_part_of_lang = tk.Entry(top)
-        # e_gen = tk.Entry(top)
-        # e_number = tk.Entry(top)
-        # e_padeJ = tk.Entry(top)
-        # l_part_of_lang.grid(row=1, column=0, pady=10, padx=10)
-        # l_gen.grid(row=2, column=0, pady=10, padx=10)
-        # l_number.grid(row=3, column=0, pady=10, padx=10)
-        # l_padeJ.grid(row=4, column=0, pady=10, padx=10)
-        # e_part_of_lang.grid(row=1, column=1, pady=10, padx=10)
-        # e_gen.grid(row=2, column=1, pady=10, padx=10)
-        # e_number.grid(row=3, column=1, pady=10, padx=10)
-        # e_padeJ.grid(row=4, column=1, pady=10, padx=10)
-        # top.count = e_count
-        # top.part_of_lang = e_part_of_lang
-        # top.gen = e_gen
-        # top.number = e_number
-        # top.padej = e_padeJ
-        #
-        # content_frame = tk.Frame(top)
-        # top.table = Table.Table(content_frame, Vocabulary.Vocabulary())
-        # content_frame.grid(row=8, column=0, columnspan=2)
-        # top.content_frame = content_frame
-        #
-        # l_morph_format_info = tk.Label(top, text="Включать слова с неформатированным вводом?")
-        # l_morph_format_info.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
-        # r_buttons = tk.IntVar()
-        # r_buttons.set(1)
-        # top.r_but = r_buttons
-        # tk.Radiobutton(top, text="да", variable=r_buttons, value=True).grid(row=6, column=0, pady=10, padx=10)
-        # tk.Radiobutton(top, text="нет", variable=r_buttons, value=False).grid(row=6, column=1, pady=10, padx=10)
-        #
-        # submit = tk.Button(top, text="Найти", command=lambda: self.__process_find_by(top))
-        # submit.grid(row=7, column=0, columnspan=2, pady=10, padx=10)
+        top = tk.Toplevel()
+        top.resizable(False, False)
+        top.geometry("1000x700")
+        top.title("Поиск")
+        chb_map = {}
+        headers = ["NN", "NNS", "NNP", "VBD", "VBZ", "VBP", "VBN", "PRP", "PRP$", "JJ", "IN", "DT"]
+
+        for i in range(len(headers)):
+            head = headers[i]
+            var = tk.IntVar()
+            chb = tk.Checkbutton(top, text=head, variable=var)
+            chb.grid(row=0, column=i, pady=10, padx=10)
+            chb_map[head] = var
+
+        top.chb_map = chb_map
+
+        content_frame = tk.Frame(top)
+        my_canvas = tk.Canvas(content_frame)
+        my_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        my_scroll_bar = ttk.Scrollbar(content_frame, orient=tk.VERTICAL, command=my_canvas.yview)
+        my_scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
+        my_canvas.configure(yscrollcommand=my_scroll_bar.set)
+        my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion=my_canvas.bbox("all")))
+
+        top.table = Table.Table(my_canvas, Vocabulary.Vocabulary())
+        content_frame.place(relx=0, rely=0.1, relwidth=1, relheight=0.9)
+        top.content_frame = content_frame
+
+        submit = tk.Button(top, text="Найти", command=lambda: self.__process_find_by(top))
+        submit.grid(row=1, column=0, pady=10, padx=10, columnspan=12)
 
     def __process_find_by(self, top):
-        return None
-        # settings = [top.count.get(),
-        #             top.part_of_lang.get(),
-        #             top.gen.get(),
-        #             top.number.get(),
-        #             top.padej.get(),
-        #             top.r_but.get()]
-        # self.__controller.set_filter_settings(settings)
-        # self.__controller.set_filter_enable(True)
-        # voc = self.__controller.get_voc()
-        # if top.table and top.content_frame:
-        #     top.content_frame.destroy()
-        # content_frame = tk.Frame(top)
-        # top.table = Table.Table(content_frame, voc)
-        # content_frame.grid(row=8, column=0, columnspan=2)
-        # top.content_frame = content_frame
-        # self.__controller.set_filter_enable(False)
+        settings = []
+        for item in dict(top.chb_map).items():
+            if item[1].get() == 1:
+                settings.append(item[0])
+        self.__controller.set_filter_settings(settings)
+        self.__controller.set_filter_enable(True)
+        voc = self.__controller.get_voc()
+        if top.table and top.content_frame:
+            top.content_frame.destroy()
+        content_frame = tk.Frame(top)
+        content_frame.place(relx=0, rely=0.2, relwidth=1, relheight=0.8)
+        my_canvas = tk.Canvas(content_frame)
+        my_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        my_scroll_bar = ttk.Scrollbar(content_frame, orient=tk.VERTICAL, command=my_canvas.yview)
+        my_scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
+        my_canvas.configure(yscrollcommand=my_scroll_bar.set)
+        my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion=my_canvas.bbox("all")))
+        top.table = Table.Table(my_canvas, voc)
+        top.content_frame = content_frame
+        self.__controller.set_filter_enable(False)
 
     def __command_filter_table(self):
         top = tk.Toplevel()
@@ -283,69 +258,19 @@ class View(tk.Tk):
         # self.__set_content_table(voc)
 
     def __command_new_word_to_voc(self):
-        return None
-        # top = tk.Toplevel()
-        # top.resizable(False, False)
-        # top.title("Добавить нвоое слово")
-        # l_word = tk.Label(top, text="Словоформа")
-        # l_count = tk.Label(top, text="Кол-во")
-        # e_word = tk.Entry(top)
-        # e_count = tk.Entry(top)
-        # l_word.grid(row=0, column=0, pady=10, padx=10)
-        # l_count.grid(row=0, column=1, pady=10, padx=10)
-        # e_word.grid(row=1, column=0, pady=10, padx=10)
-        # e_count.grid(row=1, column=1, pady=10, padx=10)
-        # top.word = e_word
-        # top.count = e_count
-        #
-        # format_frame = tk.Frame(top)
-        # l_part_of_lang = tk.Label(format_frame, text="Часть речи")
-        # l_gen = tk.Label(format_frame, text="Род")
-        # l_number = tk.Label(format_frame, text="Число")
-        # l_padeJ = tk.Label(format_frame, text="Падеж")
-        # e_part_of_lang = tk.Entry(format_frame)
-        # e_gen = tk.Entry(format_frame)
-        # e_number = tk.Entry(format_frame)
-        # e_padeJ = tk.Entry(format_frame)
-        # l_part_of_lang.grid(row=0, column=0)
-        # l_gen.grid(row=1, column=0)
-        # l_number.grid(row=2, column=0)
-        # l_padeJ.grid(row=3, column=0)
-        # e_part_of_lang.grid(row=0, column=1)
-        # e_gen.grid(row=1, column=1)
-        # e_number.grid(row=2, column=1)
-        # e_padeJ.grid(row=3, column=1)
-        # format_frame.part_of_lang = e_part_of_lang
-        # format_frame.gen = e_gen
-        # format_frame.number = e_number
-        # format_frame.padeJ = e_padeJ
-        # format_frame.grid(row=2, column=1)
-        #
-        # own_format_str = tk.Frame(top)
-        # l_str_input = tk.Label(own_format_str, text="Морфологическая информация")
-        # e_str_input = tk.Entry(own_format_str)
-        # l_str_input.grid(row=0, column=0)
-        # e_str_input.grid(row=1, column=0)
-        # own_format_str.str_input = e_str_input
-        #
-        # top.format_frame = format_frame
-        # top.own_format = own_format_str
-        #
-        # r_buttons = tk.IntVar()
-        # r_buttons.set(1)
-        # top.r_but = r_buttons
-        # tk.Radiobutton(top, text="Форматированный ввод", variable=r_buttons, value=1,
-        #                command=lambda: self.__change_new_word_input(r_buttons.get(), top)).grid(row=2, column=0,
-        #                                                                                         pady=10,
-        #                                                                                         padx=10)
-        # tk.Radiobutton(top, text="Как строка", variable=r_buttons, value=2,
-        #                command=lambda: self.__change_new_word_input(r_buttons.get(), top)).grid(row=3, column=0,
-        #                                                                                         pady=10,
-        #                                                                                         padx=10)
-        # b_add = tk.Button(top, text="Добавить", command=lambda: self.__add_new_word_process(top))
-        # b_add.grid(row=4, column=0, columnspan=2)
+        top = tk.Toplevel()
+        top.resizable(False, False)
+        top.title("Добавить новое предложение")
+        l_sentence = tk.Label(top, text="Предложение")
+        e_sentence = tk.Entry(top)
 
-    def __add_new_word_process(self, top):
+        l_sentence.grid(row=0, column=0, pady=10, padx=10)
+        e_sentence.grid(row=1, column=0, pady=10, padx=10)
+        top.sentence = e_sentence
+        b_add = tk.Button(top, text="Добавить", command=lambda: self.__add_new_sentence_process(top))
+        b_add.grid(row=4, column=0, columnspan=2)
+
+    def __add_new_sentence_process(self, top):
         return None
         # word = top.word.get()
         # count = top.count.get()
@@ -359,15 +284,6 @@ class View(tk.Tk):
         # top.destroy()
         # voc = self.__controller.add_new_word_to_voc(word, count, morphological_info)
         # self.__set_content_table(voc)
-
-    def __change_new_word_input(self, value, top):
-        return None
-        # if value == 1:
-        #     top.own_format.grid_forget()
-        #     top.format_frame.grid(row=2, column=1, pady=10, padx=10)
-        # else:
-        #     top.own_format.grid(row=2, column=1, pady=10, padx=10)
-        #     top.format_frame.grid_forget()
 
     def __command_open(self):
         filename = filedialog.askopenfilename(title="Выберите файл для открытия", filetypes=[("pkl files", ".pkl")])
